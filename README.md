@@ -14,13 +14,13 @@ steps:
   - uses: actions/checkout@v7
     with:
       fetch-depth: 0
-  - uses: nicolaguglielmi/test-proof@v0.3.0
+  - uses: nicolaguglielmi/test-proof@v0.3.1
 ```
 
 That repository holds a copy of this Action at the same version, for its Marketplace page. The same Action from the lights-out repository:
 
 ```yaml
-  - uses: nicolaguglielmi/lights-out/actions/test-proof@v0.3.0
+  - uses: nicolaguglielmi/lights-out/actions/test-proof@v0.3.1
 ```
 
 `fetch-depth: 0` is needed: the Action judges the range from the pull request's base, and a shallow checkout does not hold it. The Action prints one `GO` or `NO-GO` line and posts it as a check run on the pull request's head commit. Linux runners only: it needs docker.
@@ -47,7 +47,7 @@ That repository holds a copy of this Action at the same version, for its Marketp
 
 ## What it needs
 
-A committed `.lights-out/` contract in your repository: the test command, the test paths. `lights-out init` drafts it, outside your repository, for you to review and commit. See [use lights-out on your repository](https://github.com/nicolaguglielmi/lights-out/blob/main/docs/use-on-your-repo.md).
+A committed `.lights-out/` contract in your repository: the test command, the test paths. A range is judged by the contract at its base, so on a repository with none the first check is NO-GO: `NO-GO: test-proof — the repository has no .lights-out/workload.env committed; lights-out init drafts one`. After 0.3.0 that check also carries the fix: the Action drafts the contract from the pull request's base with `lights-out init`, shows its three small files in the check's summary, attaches the whole draft to the run as an artifact, and prints the two commands that commit it (`gh run download`, then `git add .lights-out && git commit`). One commit, and the next check is judged. With 0.3.0, draft it with the `lights-out` wrapper: see [the first check](https://github.com/nicolaguglielmi/lights-out/blob/main/docs/use-on-your-repo.md#from-a-pull-request-the-actions-first-check) and [use lights-out on your repository](https://github.com/nicolaguglielmi/lights-out/blob/main/docs/use-on-your-repo.md).
 
 A pull request from a fork has a read-only token, so the check run is not posted. The job's own status carries the verdict. A range is judged by the contract at its base, so a pull request cannot loosen what judges it.
 
